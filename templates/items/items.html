@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Items{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="d-flex justify-content-between border-bottom pb-3 mb-4">
+        <h2>All Items</h2>
+        <button class="btn btn-dark btn-sm">
+            <a class="text-white" href="/admin/item_app/item/add/">
+                Add Item +
+            </a>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a class="text-dark" href="/admin/item_app/item/{{ item.pk }}/change/">{{ item.name }}</a></td>
+                    <td>{{ item.price }}</td>
+                    {% if item.is_available %}
+                    <td>Yes</td>
+                    {% else %}
+                    <td>No</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

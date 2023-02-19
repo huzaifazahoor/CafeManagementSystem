@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Add New Order{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="d-flex justify-content-between border-bottom pb-3 mb-4">
+        <h2>New Order</h2>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="row w-50">
+            <div class="mb-3">
+                <label for="customer" class="form-label">Customer</label>
+                <select class="form-select" name="customer">
+                    <option selected>Choose Customer</option>
+                    {% for customer in customers %}
+                    <option value="{{ customer.pk }}">{{ customer.name }} - {{ customer.department }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row w-50">
+            <div class="mb-3">
+                <label for="customer" class="form-label">Time Period</label>
+                <select class="form-select" name="customer">
+                    <option selected>Choose Time Period</option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-between border-bottom mb-4">
+                <h4>All Available Items</h4>
+                <button class="btn btn-dark btn-sm">
+                        <a class="text-white" href="/admin/item_app/item/add/">
+                        Add Item +
+                    </a>
+                    </button>
+            </div>
+            {% for item in items %}
+            <div class="col-4 p-3 border">
+                <div class="d-flex">
+                    <div class="flex-grow-1">
+                        <input class="form-check-input mt-2" type="checkbox" name="checkRemember1">
+                        <label class="form-check-label" for="checkRemember">{{ item.name }}</label>
+                        <span class="mx-5">{{ item.price }}</span>
+                        <input type="number" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <input type="submit" value="Create" class="btn btn-outline-dark my-3">
+    </form>
+</div>
+<div class="row justify-content-end">
+    <div class="col-4 mt-4 pt-4">
+        <h5 class="text text-center">TOTAL: <span>$</span><span id="total"></span></h5>
+    </div>
+</div>
+{% endblock %}
