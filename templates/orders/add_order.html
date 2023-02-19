@@ -11,7 +11,7 @@
             <div class="mb-3">
                 <label for="customer" class="form-label">Customer</label>
                 <select class="form-select" name="customer">
-                    <option selected>Choose Customer</option>
+                    <option value="" selected>Choose Customer</option>
                     {% for customer in customers %}
                     <option value="{{ customer.pk }}">{{ customer.name }} - {{ customer.department }}</option>
                     {% endfor %}
@@ -21,8 +21,8 @@
         <div class="row w-50">
             <div class="mb-3">
                 <label for="customer" class="form-label">Time Period</label>
-                <select class="form-select" name="customer">
-                    <option selected>Choose Time Period</option>
+                <select class="form-select" name="time_period">
+                    <option value="" selected>Choose Time Period</option>
                     <option value="Breakfast">Breakfast</option>
                     <option value="Lunch">Lunch</option>
                     <option value="Dinner">Dinner</option>
@@ -42,10 +42,11 @@
             <div class="col-4 p-3 border">
                 <div class="d-flex">
                     <div class="flex-grow-1">
-                        <input class="form-check-input mt-2" type="checkbox" name="checkRemember1">
+                        <input class="form-check-input mt-2" type="checkbox" name="flag">
                         <label class="form-check-label" for="checkRemember">{{ item.name }}</label>
+                        <input type="hidden" value="{{ item.name }}" name="item">
                         <span class="mx-5">{{ item.price }}</span>
-                        <input type="number" min="0" max="100">
+                        <input type="number" min="0" max="100" value="2" name="quantity">
                     </div>
                 </div>
             </div>

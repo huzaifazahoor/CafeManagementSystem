@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Order
-from django.db.models import Sum, Case, CharField, Value, When, F
+from django.db.models import Sum, F
 from datetime import datetime
 from item_app.models import Item
 from customer_app.models import Customer
@@ -34,6 +34,26 @@ def orders(request):
 
 @login_required
 def add_order(request):
+    if request.method == "POST":
+        if customer := request.POST.get("customer") or None:
+            cust = Customer.objects.get(pk=int(customer))
+            time_period = request.POST.get("time_period") or None
+            quantities = request.POST.getlist("quatity")
+            flags = request.POST.getlist("flag")
+            items = request.POST.getlist("item")
+            for item, quantity, flag in zip(items, quantities, flags):
+                if flag:
+                    menu = Item.objects.get(name=item.strip())
+                    obj, created = Item.objects.update_or_create(
+                        customer=cust,
+                        order_id="order_id",
+                        defaults={
+                            "menu": menu,
+                            "quantity": int(quantity),
+                            "time_period": time_period,
+                        },
+                    )
+            return redirect("orders")
     context = {
         "items": Item.objects.filter(is_available=True),
         "customers": Customer.objects.order_by("name"),
