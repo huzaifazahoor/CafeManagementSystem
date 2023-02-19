@@ -26,8 +26,8 @@
                 {% for customer in customers %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td><a class="text-dark" href="/admin/customer_app/customer/{{ customer.pk }}/change/">{{
-                            customer.name }}</a></td>
+                    <td><a class="text-dark" href="/admin/customer_app/customer/{{ customer.pk }}/change/">
+                        {{ customer.name }}</a></td>
                     <td>{{ customer.cnic }}</td>
                     <td>{{ customer.mobile_no }}</td>
                     <td>{{ customer.department }}</td>
