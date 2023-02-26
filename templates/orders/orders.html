@@ -4,37 +4,36 @@
 <div class="row">
   <div class="d-flex justify-content-between border-bottom pb-3 mb-4">
     <h2>Orders</h2>
+    <button class="btn btn-dark btn-sm">
+      <a class="text-white" href="{% url 'add_order' %}">
+          Add Order +
+      </a>
+  </button>
   </div>
-  {% for time_period in time_periods %}
-  <h2>{{ time_period }}</h2>
-  {% if orders_by_time_period.time_period %}
-  <table>
-    <thead>
-      <tr>
-        <th>Order time</th>
-        <th>Customer</th>
-        <th>Items</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total price</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for order in orders_by_time_period.time_period %}
-      <tr>
-        <td>{{ order.created_at }}</td>
-        <td>{{ order.customer__name }}</td>
-        <td>{{ order.menu__name }}</td>
-        <td>{{ order.quantity }}</td>
-        <td>{{ order.menu__price }}</td>
-        <td>{{ order.total_price }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p>No orders found for {{ time_period }}.</p>
-  {% endif %}
-  {% endfor %}
+  <div class="table-responsive">
+
+    <table id="table_id" class="table table-sm table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Order time</th>
+          <th>Customer</th>
+          <th>Time Period</th>
+          <th>Items Number</th>
+          <th>Total price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td><a class="text-dark" href="{% url 'edit_order' %}?order-num={{ order.order_id }}">{{ order.created_at__date }}</a></td>
+          <td>{{ order.customer__name }}</td>
+          <td>{{ order.time_period }}</td>
+          <td>{{ order.num_orders }}</td>
+          <td>{{ order.total_price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

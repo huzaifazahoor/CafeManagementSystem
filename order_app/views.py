@@ -1,54 +1,44 @@
 from django.shortcuts import render, redirect
 from .models import Order
-from django.db.models import Sum, F
-from datetime import datetime
 from item_app.models import Item
 from customer_app.models import Customer
 from django.contrib.auth.decorators import login_required
+import uuid
+from django.db.models import Count, Sum
 
 
 @login_required
 def orders(request):
-    orders = (
-        Order.objects.annotate(
-            order_total=Sum(F("quantity") * F("menu__price")),
-            order_items=F("menu__name"),
-        )
-        .filter(created_at__date=datetime.now().date())
-        .values(
-            "id",
-            "customer__name",
-            "order_total",
-            "order_items",
-            "time_period",
-            "created_at__date",
-        )
-        .order_by("created_at__date", "time_period")
+    orders = Order.objects.values(
+        "order_id", "customer__name", "created_at__date", "time_period"
+    ).annotate(
+        num_orders=Count("id"),
+        total_price=Sum("menu__price"),
     )
     print(orders)
-    return render(
-        request,
-        "orders/orders.html",
-    )
+    return render(request, "orders/orders.html", {"orders": orders})
 
 
 @login_required
 def add_order(request):
     if request.method == "POST":
         if customer := request.POST.get("customer") or None:
+            order_id = str(uuid.uuid4())
             cust = Customer.objects.get(pk=int(customer))
             time_period = request.POST.get("time_period") or None
-            quantities = request.POST.getlist("quatity")
+            quantities = request.POST.getlist("quantity")
             flags = request.POST.getlist("flag")
+            flags = {flag: True for flag in flags}
             items = request.POST.getlist("item")
-            for item, quantity, flag in zip(items, quantities, flags):
+            for item, quantity in zip(items, quantities):
+                flag = flags.get(item) or False
                 if flag:
                     menu = Item.objects.get(name=item.strip())
-                    obj, created = Item.objects.update_or_create(
+                    obj, created = Order.objects.update_or_create(
                         customer=cust,
-                        order_id="order_id",
+                        order_id=order_id,
+                        menu=menu,
                         defaults={
-                            "menu": menu,
                             "quantity": int(quantity),
                             "time_period": time_period,
                         },
@@ -59,3 +49,13 @@ def add_order(request):
         "customers": Customer.objects.order_by("name"),
     }
     return render(request, "orders/add_order.html", context=context)
+
+
+def edit_order(request):
+    if order_id := request.GET.get("order-num") or None:
+        orders = Order.objects.prefetch_related("customer").filter(
+            order_id=order_id,
+        )
+        if len(orders) > 0:
+            return render(request, "orders/edit_order.html", {"orders": orders})
+    return redirect("orders")
